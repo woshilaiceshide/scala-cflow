@@ -79,6 +79,8 @@ class Line[R] {
   }
 
   def continue[V](value: => V)(implicit executor: ExecutionContext): Point[V] = new Point(Future(value).map { Left(_) })
+  def justContinue()(implicit executor: ExecutionContext): Point[Unit] = continue(())
+  def fromFuture[V](value: Future[V])(implicit executor: ExecutionContext): Point[V] = new Point(value.map { Left(_) })
   def complete[V](result: => R)(implicit executor: ExecutionContext): Point[V] = new Point(Future(result).map { Right(_) })
   def fail(code: Int, message: String)(implicit executor: ExecutionContext): Point[Nothing] = fail(CausewithCode(code, message))
   def fail(cause: Throwable)(implicit executor: ExecutionContext): Point[Nothing] = new Point(Future.failed(cause))
