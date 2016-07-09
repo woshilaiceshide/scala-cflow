@@ -3,7 +3,7 @@ Some control structures written in scala.
 
 Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`: 
 
-* let you write asynchronous logics in a synchronous way without any nested braces.
+* let you write asynchronous logics in a synchronous way **without any nested braces**.
 
 * provides an convenient `'ask'` instead of `'akka.pattern.ask'`. Especially, the `'akka.pattern.ask'` will provides nothing meaningful when facing timeouts. 
 
@@ -77,6 +77,8 @@ Its output is show as follow:
 	*** timeout when asking an odd thing to Actor[akka://test/user/aActor#1434941999] ***
 	
 	test completed
+
+For more examples, please see https://github.com/woshilaiceshide/scala-cflow/tree/master/src/test/scala/woshilaiceshide/cflow/test .
 	
 # Thanks
 
