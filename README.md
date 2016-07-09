@@ -5,7 +5,7 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 
 * let you write asynchronous logics in a synchronous way **without any nested braces**.
 
-* provides an convenient `'ask'` instead of `'akka.pattern.ask'`. Especially, the `'akka.pattern.ask'` will provides nothing meaningful when facing timeouts. 
+* provides an convenient `'ask'` instead of `'akka.pattern.ask'`. Especially, the `'akka.pattern.ask'` will provides nothing meaningful when facing timeouts, and scala-cflow kicks this problem off.
 
 # Example
 	  import akka.actor._
@@ -53,7 +53,7 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 	  val f = x.future
 	  f.onComplete {
 	    case Success(r) => println(s"""result is ${r}""")
-	    case Failure(cause) => println; println(s"""*** ${cause.getMessage} ***"""); println
+	    case Failure(cause) => println(s"""\n*** ${cause.getMessage} ***\n""")
 	  }
 	
 	  scala.concurrent.Await.ready(f, Duration(6, java.util.concurrent.TimeUnit.SECONDS))
