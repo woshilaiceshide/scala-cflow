@@ -2,11 +2,20 @@ package woshilaiceshide.cflow.line
 
 import scala.util._
 import scala.concurrent._
-import scala.concurrent.ExecutionContext
+
+import akka.actor._
+import akka.util._
+
+import java.util.concurrent.TimeUnit
 
 object Line {
+
   final case class CausewithCode(code: Int, message: String) extends Exception(s"""${code} with ${message}""")
+
   final case class SomethingIsCompleted() extends Exception("something is bad")
+
+  final case class WrappedAskTimeoutException(actor: ActorRef, asked: Any) extends Exception(s"""timeout when asking ${asked} to ${actor}""")
+
 }
 
 class Line[R] {
@@ -44,7 +53,7 @@ class Line[R] {
 
     def future: Future[Either[V, R]] = value
 
-    def mapTo[S](implicit tag: scala.reflect.ClassTag[S], executor: ExecutionContext): Point[S] = {
+    def mapTo[S](implicit tag: scala.reflect.ClassTag[S]): Point[S] = {
       new Point(value.mapTo[Either[S, R]])
     }
   }
@@ -54,23 +63,23 @@ class Line[R] {
   def retrieve(x: Line[R]#EndPoint)(implicit ec: ExecutionContext): Future[R] = {
     val promise = Promise[R]
     x.future.map {
-      case Left(r) => promise.complete(scala.util.Success(r))
-      case Right(r) => promise.complete(scala.util.Success(r))
+      case Left(r) => promise.complete(Success(r))
+      case Right(r) => promise.complete(Success(r))
     }.onFailure {
       case cause => promise.failure(cause)
     }
     promise.future
   }
 
-  def sequence[T](Points: Seq[Line[R]#Point[T]])(implicit executor: ExecutionContext): Point[Seq[T]] = {
+  def sequence[T](points: Seq[Line[R]#Point[T]])(implicit executor: ExecutionContext): Point[Seq[T]] = {
     val promise = Promise[Either[Seq[T], R]]()
-    val futures = Future.sequence(Points.map { _.future })
+    val futures = Future.sequence(points.map { _.future })
     futures.map { x =>
       if (x.exists(_.isRight)) {
         promise.failure(new SomethingIsCompleted())
       } else {
         val filtered = x.filter(_.isLeft).map { x => x.asInstanceOf[Left[T, R]].a }
-        promise.complete(scala.util.Success(Left(filtered)))
+        promise.complete(Success(Left(filtered)))
       }
     }.onFailure {
       case cause => promise.failure(cause)
@@ -79,11 +88,34 @@ class Line[R] {
   }
 
   def continue[V](value: => V)(implicit executor: ExecutionContext): Point[V] = new Point(Future(value).map { Left(_) })
+  /**
+   * a convenient method
+   */
   def justContinue()(implicit executor: ExecutionContext): Point[Unit] = continue(())
   def fromFuture[V](value: Future[V])(implicit executor: ExecutionContext): Point[V] = new Point(value.map { Left(_) })
   def complete[V](result: => R)(implicit executor: ExecutionContext): Point[V] = new Point(Future(result).map { Right(_) })
   def fail(code: Int, message: String)(implicit executor: ExecutionContext): Point[Nothing] = fail(CausewithCode(code, message))
   def fail(cause: Throwable)(implicit executor: ExecutionContext): Point[Nothing] = new Point(Future.failed(cause))
+
+  def ask(a: ActorRef, message: Any, timeoutInSeconds: Int)(implicit executor: ExecutionContext): Point[Any] = {
+    ask(a, message, Timeout(timeoutInSeconds, TimeUnit.SECONDS))
+  }
+
+  def ask(a: ActorRef, message: Any, timeout: Timeout)(implicit executor: ExecutionContext): Point[Any] = {
+    val promise = Promise[Any]()
+    new akka.pattern.AskableActorRef(a).ask(message)(timeout).onComplete {
+      case Success(r) => promise.complete { Success(r) }
+      case Failure(_: akka.pattern.AskTimeoutException) => promise.failure(new WrappedAskTimeoutException(a, message))
+      case Failure(cause) => promise.failure(cause)
+    }
+    fromFuture(promise.future)
+
+  }
+
+  def send(a: ActorRef, message: Any)(implicit executor: ExecutionContext) = {
+    a ! message
+    justContinue()
+  }
 
 }
 

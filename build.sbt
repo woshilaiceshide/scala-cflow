@@ -2,7 +2,7 @@ organization := "woshilaiceshide"
 
 name := "scala-cflow"
 
-version := "1.0-SNAPSHOT"
+version := "1.0"
 
 description := ""
 
@@ -34,11 +34,12 @@ scalacOptions := Seq("-unchecked", "-deprecation","-optimise", "-encoding", "utf
 
 javacOptions ++= Seq("-Xlint:deprecation", "-Xlint:unchecked", "-source", "1.7", "-target", "1.7", "-g:vars")
 
+//libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4.7" exclude("com.typesafe", "config")
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4.7"
+
 retrieveManaged := false
 
 enablePlugins(JavaAppPackaging)
-
-net.virtualvoid.sbt.graph.Plugin.graphSettings
 
 unmanagedSourceDirectories in Compile <+= baseDirectory( _ / "src" / "java" )
 
