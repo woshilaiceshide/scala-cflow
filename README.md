@@ -49,6 +49,7 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 	    rx <- line.complete("ok")
 	  ) yield rx
 	
+	  //print the final result
 	  val f = x.future
 	  f.onComplete {
 	    case Success(r) => println(s"""result is ${r}""")
@@ -61,7 +62,7 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 	  println("test completed")
 
 	
-Its output is show as follow: 
+Its output is shown as follow: 
 
 	I'll do thing #1 right now
 	thing #1 is done
