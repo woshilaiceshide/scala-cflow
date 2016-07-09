@@ -33,19 +33,19 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 	
 	  val x: line.EndPoint = for (
 	    r1 <- line.ask(worker, "do thing #1", 1);
-	    _ <- r1 match {
+	    _  <- r1 match {
 	      case "done" => line.justContinue()
 	      case _ => line.fail(500, "something is wrong for thing #1")
 	    };
 	    r2 <- line.ask(worker, "do thing #2", 1);
-	    _ <- r2 match {
+	    _  <- r2 match {
 	      case "done" => line.justContinue()
 	      case _ => line.fail(500, "something is wrong for thing #2")
 	    };
 	    r3 <- line.ask(worker, "do thing #3", 1);
 	    r4 <- line.ask(worker, "do thing #4", 1);
 	    r5 <- line.ask(worker, "do thing #5", 1);
-	    _ <- line.ask(worker, "an odd thing", 1);
+	    _  <- line.ask(worker, "an odd thing", 1);
 	    rx <- line.complete("ok")
 	  ) yield rx
 	
