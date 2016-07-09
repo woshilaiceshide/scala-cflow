@@ -21,7 +21,7 @@ object LineExample2 extends App {
     }
   }
 
-  val worker = factory.actorOf(Props[Worker], "aActor")
+  val worker = factory.actorOf(Props[Worker], "worker")
 
   val line = new Line[String]()
 
@@ -43,6 +43,7 @@ object LineExample2 extends App {
     rx <- line.complete("ok")
   ) yield rx
 
+  //print the final result
   val f = x.future
   f.onComplete {
     case Success(r) => println(s"""result is ${r}""")

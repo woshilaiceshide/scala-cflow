@@ -27,7 +27,7 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 	    }
 	  }
 	
-	  val worker = factory.actorOf(Props[Worker], "aActor")
+	  val worker = factory.actorOf(Props[Worker], "worker")
 	
 	  val line = new Line[String]()
 	
@@ -49,6 +49,7 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 	    rx <- line.complete("ok")
 	  ) yield rx
 	
+	  //print the final result
 	  val f = x.future
 	  f.onComplete {
 	    case Success(r) => println(s"""result is ${r}""")
@@ -61,7 +62,7 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 	  println("test completed")
 
 	
-Its output is show as follow: 
+Its output is shown as follow: 
 
 	I'll do thing #1 right now
 	thing #1 is done
@@ -74,7 +75,7 @@ Its output is show as follow:
 	I'll do thing #5 right now
 	thing #5 is done
 	
-	*** timeout when asking an odd thing to Actor[akka://test/user/aActor#1434941999] ***
+	*** timeout when asking an odd thing to Actor[akka://test/user/worker#1434941999] ***
 	
 	test completed
 
