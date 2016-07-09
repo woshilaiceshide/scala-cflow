@@ -8,6 +8,7 @@ object LineExample1 extends App {
   import scala.concurrent.duration._
   import scala.concurrent.ExecutionContext.Implicits.global
 
+  //an execution flow that results in a String
   val line = new Line[String]()
 
   def doThing[T](t: T) = { println(s"""do thing #(${t})"""); t }

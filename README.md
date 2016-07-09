@@ -29,6 +29,7 @@ Currently, it just contains a class named `'woshilaiceshide.cflow.line.Line[R]'`
 	
 	  val worker = factory.actorOf(Props[Worker], "worker")
 	
+	  //an execution flow that results in a String
 	  val line = new Line[String]()
 	
 	  val x: line.EndPoint = for (
