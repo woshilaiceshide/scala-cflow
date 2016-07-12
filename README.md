@@ -81,6 +81,15 @@ Its output is shown as follow:
 	test completed
 
 For more examples, please see https://github.com/woshilaiceshide/scala-cflow/tree/master/src/test/scala/woshilaiceshide/cflow/test .
+
+## How to Use It?
+1. I've published scala-cflow to bintray, you can add the following line in your build.sbt:
+
+	resolvers += "Woshilaiceshide Releases" at "http://dl.bintray.com/woshilaiceshide/maven/"
+	libraryDependencies += "woshilaiceshide" %% "scala-cflow" % "1.0" withSources() 
+
+2.
+build scala-cflow locally using `'sbt publishLocal'`.
 	
 # Thanks
 
